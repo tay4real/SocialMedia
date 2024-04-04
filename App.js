@@ -126,7 +126,7 @@ const App = () => {
   const [userStoriesRenderedData, setUserStoriesRenderedData] = useState([]);
   const [isLoadingUserStories, setIsLoadingUserStories] = useState(false);
 
-  const userPostsPageSize = 4;
+  const userPostsPageSize = 2;
   const [userPostsCurrentPage, setUserPostsCurrentPage] = useState(1);
   const [userPostsRenderedData, setUserPostsRenderedData] = useState([]);
   const [isLoadingUserPosts, setIsLoadingUserPosts] = useState(false);
@@ -148,57 +148,90 @@ const App = () => {
     const getInitialData = pagination(userStories, 1, userStoriesPageSize);
     setUserStoriesRenderedData(getInitialData);
     setIsLoadingUserStories(false);
+
+    setIsLoadingUserPosts(true);
+    const getInitialDataPosts = pagination(userPosts, 1, userPostsPageSize);
+    setUserPostsRenderedData(getInitialDataPosts);
+    setIsLoadingUserPosts(false);
   }, []);
   return (
     <SafeAreaView>
-      <View style={globalStyle.header}>
-        <Title title={"Let's Explore"} />
-
-        <TouchableOpacity style={globalStyle.messageIcon}>
-          <FontAwesomeIcon icon={faEnvelope} size={20} color={'#898DAE'} />
-          <View style={globalStyle.messageNumberContainer}>
-            <Text style={globalStyle.messageNumber}>2</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={globalStyle.userStoryContainer}>
-        <FlatList
-          onEndReachedThreshold={0.5}
-          onEndReached={() => {
-            if (isLoadingUserStories) {
-              return;
-            }
-            setIsLoadingUserStories(true);
-            const contentToAppend = pagination(
-              userStories,
-              userStoriesCurrentPage + 1,
-              userStoriesPageSize,
-            );
-            if (contentToAppend.length > 0) {
-              setuserStoriesCurrentPage(userStoriesCurrentPage + 1);
-              setUserStoriesRenderedData(prev => [...prev, ...contentToAppend]);
-            }
-            setIsLoadingUserStories(false);
-          }}
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
-          data={userStoriesRenderedData}
-          renderItem={({item}) => (
-            <UserStory
-              key={'userStory' + item.id}
-              firstName={item.firstName}
-              profileImage={item.profileImage}
-            />
-          )}
-        />
-      </View>
       <View style={globalStyle.userPostContainer}>
         <FlatList
+          ListHeaderComponent={
+            <>
+              <View style={globalStyle.header}>
+                <Title title={"Let's Explore"} />
+
+                <TouchableOpacity style={globalStyle.messageIcon}>
+                  <FontAwesomeIcon
+                    icon={faEnvelope}
+                    size={20}
+                    color={'#898DAE'}
+                  />
+                  <View style={globalStyle.messageNumberContainer}>
+                    <Text style={globalStyle.messageNumber}>2</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View style={globalStyle.userStoryContainer}>
+                <FlatList
+                  onEndReachedThreshold={0.5}
+                  onEndReached={() => {
+                    if (isLoadingUserStories) {
+                      return;
+                    }
+                    setIsLoadingUserStories(true);
+                    const contentToAppend = pagination(
+                      userStories,
+                      userStoriesCurrentPage + 1,
+                      userStoriesPageSize,
+                    );
+                    if (contentToAppend.length > 0) {
+                      setuserStoriesCurrentPage(userStoriesCurrentPage + 1);
+                      setUserStoriesRenderedData(prev => [
+                        ...prev,
+                        ...contentToAppend,
+                      ]);
+                    }
+                    setIsLoadingUserStories(false);
+                  }}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  data={userStoriesRenderedData}
+                  renderItem={({item}) => (
+                    <UserStory
+                      key={'userStory' + item.id}
+                      firstName={item.firstName}
+                      profileImage={item.profileImage}
+                    />
+                  )}
+                />
+              </View>
+            </>
+          }
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            if (isLoadingUserPosts) {
+              return;
+            }
+            setIsLoadingUserPosts(true);
+            const contentToAppend = pagination(
+              userPosts,
+              userPostsCurrentPage + 1,
+              userPostsPageSize,
+            );
+            if (contentToAppend.length > 0) {
+              setUserPostsCurrentPage(userPostsCurrentPage + 1);
+              setUserPostsRenderedData(prev => [...prev, ...contentToAppend]);
+            }
+            setIsLoadingUserPosts(false);
+          }}
+          data={userPostsRenderedData}
           showsVerticalScrollIndicator={false}
-          data={userPosts}
           renderItem={({item}) => (
             <UserPost
-              key={item.id}
+              key={'userPost' + item.id}
               firstName={item.firstName}
               lastName={item.lastName}
               location={item.location}

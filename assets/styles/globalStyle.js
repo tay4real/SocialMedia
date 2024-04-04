@@ -3,8 +3,6 @@ import {getFontFamily} from '../fonts/helper';
 
 const style = StyleSheet.create({
   header: {
-    marginLeft: 27,
-    marginRight: 17,
     marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
@@ -34,7 +32,6 @@ const style = StyleSheet.create({
   },
   userStoryContainer: {
     marginTop: 20,
-    marginHorizontal: 28,
   },
   userPostContainer: {
     marginHorizontal: 24,
